@@ -1,27 +1,31 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
-import { Example, Startup } from '@/screens';
+import { Example, HomeScreen, Startup } from '@/screens';
 import { useTheme } from '@/theme';
 
 import type { RootStackParamList } from '@/types/navigation';
+import Sidebar from '@/components/sidebar/Sidebar';
+import CategoryScreen from '@/screens/Category';
 
 const Stack = createStackNavigator<RootStackParamList>();
+const Drawer = createDrawerNavigator();
 
 function ApplicationNavigator() {
-	const { variant, navigationTheme } = useTheme();
-
 	return (
-		<SafeAreaProvider>
-			<NavigationContainer theme={navigationTheme}>
-				<Stack.Navigator key={variant} screenOptions={{ headerShown: false }}>
-					<Stack.Screen name="Startup" component={Startup} />
-					<Stack.Screen name="Example" component={Example} />
-				</Stack.Navigator>
-			</NavigationContainer>
-		</SafeAreaProvider>
-	);
+		<NavigationContainer>
+		  <Drawer.Navigator drawerContent={props => <Sidebar {...props} />}>
+			<Drawer.Screen name="Home" component={HomeScreen} />
+			<Drawer.Screen name="Cuisines" component={CategoryScreen}/> 
+			<Drawer.Screen name="Search" component={HomeScreen} />
+			<Drawer.Screen name="Cart" component={HomeScreen} />
+			<Drawer.Screen name="Profile" component={HomeScreen} />
+			<Drawer.Screen name="Orders" component={HomeScreen} />
+		  </Drawer.Navigator>
+		</NavigationContainer>
+	  );
 }
 
 export default ApplicationNavigator;
