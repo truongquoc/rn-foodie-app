@@ -9,23 +9,35 @@ import { useTheme } from '@/theme';
 import type { RootStackParamList } from '@/types/navigation';
 import Sidebar from '@/components/sidebar/Sidebar';
 import CategoryScreen from '@/screens/Category';
+import OnboardingScreen from '@/screens/Onboarding/OnboardingScreen';
+import SplashScreen from '@/screens/splash/SplashScreen';
+import NextSplashScreen from '@/screens/splash/NextSplashScreen';
 
-const Stack = createStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
+
+function MainDrawer() {
+	return (
+	  <Drawer.Navigator initialRouteName="Home">
+		<Drawer.Screen name="Home" component={HomeScreen} />
+		<Drawer.Screen name="Cuisines" component={CategoryScreen}/> 
+
+		{/* Add more screens here */}
+	  </Drawer.Navigator>
+	);
+}
 
 function ApplicationNavigator() {
 	return (
 		<NavigationContainer>
-		  <Drawer.Navigator drawerContent={props => <Sidebar {...props} />}>
-			<Drawer.Screen name="Home" component={HomeScreen} />
-			<Drawer.Screen name="Cuisines" component={CategoryScreen}/> 
-			<Drawer.Screen name="Search" component={HomeScreen} />
-			<Drawer.Screen name="Cart" component={HomeScreen} />
-			<Drawer.Screen name="Profile" component={HomeScreen} />
-			<Drawer.Screen name="Orders" component={HomeScreen} />
-		  </Drawer.Navigator>
-		</NavigationContainer>
-	  );
+		<Stack.Navigator initialRouteName="Splash1" screenOptions={{ headerShown: false }}>
+		  <Stack.Screen name="Splash1" component={SplashScreen} />
+		  <Stack.Screen name="Splash2" component={NextSplashScreen} />
+		  <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+		  <Stack.Screen name="MainDrawer" component={MainDrawer} />
+		</Stack.Navigator>
+	  </NavigationContainer>
+	  )
 }
 
 export default ApplicationNavigator;
