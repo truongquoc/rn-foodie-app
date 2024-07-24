@@ -1,86 +1,141 @@
-import React, {useRef} from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import Swiper from 'react-native-swiper';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Dimensions } from 'react-native';
+import { Icon } from 'react-native-elements';
 
-export default function OnboardingScreen({ navigation }: {navigation: any}) {
-    const swiperRef = useRef(null);
+const { width } = Dimensions.get('window');
 
-    const goToNextSlide = () => {
-        swiperRef.current.scrollBy(1);
-    };
-
-      
+const OnboardingScreen = ({ navigation }: {navigation: any}) => {
+    const [currentStep, setCurrentStep] = useState(0);
+    const slideAnim = useRef(new Animated.Value(0)).current;
+  
+    const steps = [
+      {
+        question: 'What types of activities do you prioritize on your trips?',
+        options: [
+          'Exciting and adventurous activities',
+          'Visits to historical sites and cultural landmarks',
+          'Activities that are pre-planned and well-researched',
+          'Enjoying beautiful locations and taking inspiring photos',
+        ],
+      },
+      {
+        question: 'How much time do you spend researching a destination before you visit?',
+        options: [
+          'Minimal research, prefer to go with the flow',
+          'Extensive research to learn about the history and culture',
+          'Detailed research and planning to create a thorough itinerary',
+          'Some research for inspiration but not necessarily for booking trips',
+        ],
+      },
+      {
+        question: 'How important is trying local cuisine when you travel?',
+        options: [
+          "Very important, especially if it's exciting and exotic",
+          "Very important, especially if it's traditional and culturally significant",
+          'Important, but prefer well-reviewed and known eateries',
+          'Important if the food is visually appealing and Instagram-worthy',
+        ],
+      },
+    ];
+  
+    useEffect(() => {
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }, [currentStep]);
+  
+    
+    const handleNext = () => {
+        if (currentStep < steps.length - 1) {
+          Animated.timing(slideAnim, {
+            toValue: -width,
+            duration: 300,
+            useNativeDriver: true,
+          }).start(() => {
+            setCurrentStep(currentStep + 1);
+            slideAnim.setValue(width);
+            Animated.timing(slideAnim, {
+              toValue: 0,
+              duration: 300,
+              useNativeDriver: true,
+            }).start();
+          });
+        } else {
+          navigation.navigate('ResultScreen');
+        }
+      };
+  
     return (
-        <Swiper ref={swiperRef} style={styles.wrapper} showsButtons={false} loop={false} dotColor="#ddd" activeDotColor="#ff7f50">
-        <View style={styles.slide}>
-            <Image source={{uri: 'https://as1.ftcdn.net/v2/jpg/02/21/80/44/1000_F_221804493_KGdmFhJ8dOIntuTVvBcOobPAf32gScUd.jpg'}} style={styles.image} />
-            <Text style={styles.title}>Choose A Tasty Dish</Text>
-            <Text style={styles.subtitle}>Order anything you want from your favorite restaurant.</Text>
-            <TouchableOpacity style={styles.button} onPress={goToNextSlide}>
-                <Text style={styles.buttonText}>Continue</Text>
-            </TouchableOpacity>
-        </View>
-        <View style={styles.slide}>
-            <Image source={{uri:'https://as1.ftcdn.net/v2/jpg/02/21/80/44/1000_F_221804493_KGdmFhJ8dOIntuTVvBcOobPAf32gScUd.jpg'}} style={styles.image} />
-            <Text style={styles.title}>Order</Text>
-            <Text style={styles.subtitle}>Place your personal order and make your day more delicious.</Text>
-        </View>
-        <View style={styles.slide}>
-        <Image source={{uri: 'https://as1.ftcdn.net/v2/jpg/02/21/80/44/1000_F_221804493_KGdmFhJ8dOIntuTVvBcOobPAf32gScUd.jpg'}} style={styles.image} />
-        <Text style={styles.title}>Order</Text>
-        <Text style={styles.subtitle}>Place your personal order and make your day more delicious.</Text>
-        <TouchableOpacity style={styles.button} onPress={goToNextSlide}>
-          <Text style={styles.buttonText}>Continue</Text>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Animated.View style={{ ...styles.slideContainer, transform: [{ translateX: slideAnim }] }}>
+          <View style={styles.questionContainer}>
+            <Icon name="search" size={30} />
+            <Text style={styles.question}>{steps[currentStep].question}</Text>
+          </View>
+          <View style={styles.optionsContainer}>
+            {steps[currentStep].options.map((option, index) => (
+              <TouchableOpacity key={index} style={styles.optionButton}>
+                <Text style={styles.optionText}>{option}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Animated.View>
+        <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+          <Text style={styles.nextButtonText}>Save and Next</Text>
         </TouchableOpacity>
-      </View>
-        <View style={styles.slide}>
-            <Image source={{uri: 'https://as1.ftcdn.net/v2/jpg/02/21/80/44/1000_F_221804493_KGdmFhJ8dOIntuTVvBcOobPAf32gScUd.jpg'}} style={styles.image} />
-            <Text style={styles.title}>Pick Up or Delivery</Text>
-            <Text style={styles.subtitle}>We make food ordering fast, simple and free - no matter if you order online or cash.</Text>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('MainDrawer')}>
-            <Text style={styles.buttonText}>Continue</Text>
-            </TouchableOpacity>
-        </View>
-        </Swiper>
+      </ScrollView>
     );
-}
-
-const styles = StyleSheet.create({
-  wrapper: {},
-  slide: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  image: {
-    width: '80%',
-    height: '50%',
-    resizeMode: 'cover',
-    borderRadius: 15,
-    marginBottom: 30,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#888',
-    textAlign: 'center',
-    paddingHorizontal: 30,
-  },
-  button: {
-    marginTop: 30,
-    backgroundColor: '#ff7f50',
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 30,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});
+  };
+  
+  const styles = StyleSheet.create({
+    container: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+      backgroundColor: '#f5f5f5',
+    },
+    slideContainer: {
+      width: '100%',
+    },
+    questionContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    question: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginLeft: 10,
+    },
+    optionsContainer: {
+      width: '100%',
+      marginBottom: 20,
+    },
+    optionButton: {
+      backgroundColor: '#e0e0e0',
+      padding: 15,
+      borderRadius: 10,
+      marginBottom: 10,
+      alignItems: 'center',
+    },
+    optionText: {
+      fontSize: 16,
+    },
+    nextButton: {
+      backgroundColor: '#000',
+      padding: 15,
+      borderRadius: 10,
+      alignItems: 'center',
+      width: '100%',
+    },
+    nextButtonText: {
+      color: '#fff',
+      fontSize: 16,
+    },
+  });
+  
+  export default OnboardingScreen;
+  

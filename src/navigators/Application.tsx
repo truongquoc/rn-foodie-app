@@ -12,6 +12,8 @@ import CategoryScreen from '@/screens/Category';
 import OnboardingScreen from '@/screens/Onboarding/OnboardingScreen';
 import SplashScreen from '@/screens/splash/SplashScreen';
 import NextSplashScreen from '@/screens/splash/NextSplashScreen';
+import ResultScreen from '@/screens/Result/ResultScreen';
+import LocationAccessScreen from '@/screens/Result/LocationAccessScreen';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -31,9 +33,9 @@ function ApplicationNavigator() {
 	return (
 		<NavigationContainer>
 		<Stack.Navigator initialRouteName="Splash1" screenOptions={{ headerShown: false }}>
-		  <Stack.Screen name="Splash1" component={SplashScreen} />
-		  <Stack.Screen name="Splash2" component={NextSplashScreen} />
 		  <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+		  <Stack.Screen name="ResultScreen" component={ResultScreen} />
+		  <Stack.Screen name="LocationAccessScreen" component={LocationAccessScreen} />
 		  <Stack.Screen name="MainDrawer" component={MainDrawer} />
 		</Stack.Navigator>
 	  </NavigationContainer>
