@@ -1,25 +1,48 @@
-// ResultScreen.js
+// src/screens/ResultScreen.tsx
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '@/types/navigation';
+import { log } from 'console';
 
-const ResultScreen = ({ navigation }: {navigation: any}) => {
+type ResultScreenNavigationProp = StackNavigationProp<RootStackParamList, 'ResultScreen'>;
+type ResultScreenRouteProp = RouteProp<RootStackParamList, 'ResultScreen'>;
+
+type Props = {
+  navigation: ResultScreenNavigationProp;
+  route: ResultScreenRouteProp;
+};
+
+const personaImages = {
+  Escapists: require('../../assets//escapist.png'),
+  Learners: require('../../assets//escapist.png'),
+  Planners: require('../../assets//escapist.png'),
+  Dreamers: require('../../assets//escapist.png'),
+};
+
+const ResultScreen: React.FC<Props> = ({ navigation, route }) => {
+  const { persona } = route.params;
+
   const handleSurpriseMe = () => {
     navigation.navigate('LocationAccessScreen');
   };
 
+  const handleFindItMyself = () => {
+    navigation.navigate('RestaurantList');
+  };
+
+  console.log('personal image', persona);
   return (
     <View style={styles.container}>
-      {/* <Image source={require('./path/to/your/image.png')} style={styles.image} />  */}
-      {/* Replace with your image path */}
-      <Text style={styles.title}>Escapists</Text>
-      <Text style={styles.subtitle}>You're most likely</Text>
-      {/* <Image source={require('./path/to/your/emoji.png')} style={styles.emoji} />  */}
+      <Image source={personaImages[persona]} style={styles.image} />
+      <Text style={styles.title}>{persona}</Text>
+      <Text style={styles.subtitle}>You're most likely a {persona}</Text>
+      <Image source={require('../../assets/emoij.png')} style={styles.emoji} />
       <TouchableOpacity style={styles.button} onPress={handleSurpriseMe}>
         <Text style={styles.buttonText}>Surprise me with your magic</Text>
-        <Icon name="star" color="#fff" />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.outlineButton} onPress={() => navigation.navigate('NextScreen')}>
+      <TouchableOpacity style={styles.outlineButton} onPress={handleFindItMyself}>
         <Text style={styles.outlineButtonText}>Nah! I will find it myself</Text>
       </TouchableOpacity>
     </View>
@@ -55,11 +78,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#000',
+    backgroundColor: '#ff6347',
     padding: 15,
     borderRadius: 10,
+    alignItems: 'center',
     marginBottom: 10,
     width: '100%',
     justifyContent: 'center',
@@ -67,12 +89,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 16,
-    marginRight: 10,
   },
   outlineButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderColor: '#000',
+    borderColor: '#ff6347',
     borderWidth: 1,
     padding: 15,
     borderRadius: 10,
@@ -80,7 +101,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   outlineButtonText: {
-    color: '#000',
+    color: '#ff6347',
     fontSize: 16,
   },
 });

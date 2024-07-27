@@ -1,16 +1,26 @@
+import { checkUserLoggedIn } from '@/services/users/CheckUserLoggedIn';
 import React, { useEffect } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 
 export default function SplashScreen({ navigation } : {navigation:any}) {
   useEffect(() => {
-    setTimeout(() => {
-      navigation.navigate('Splash2');
-    }, 2000); // Display for 2 seconds
+    const checkLoginStatus = async () => {
+      const isLoggedIn = await checkUserLoggedIn();
+      if (isLoggedIn) {
+        navigation.replace('MainDrawer', { screen: 'Onboarding' });
+      } else {
+        navigation.replace('Login');
+      }
+    };
+
+    const timer = setTimeout(checkLoginStatus, 3000);
+
+    return () => clearTimeout(timer);
   }, [navigation]);
 
   return (
     <View style={styles.container}>
-      <Image source={{uri: 'https://as1.ftcdn.net/v2/jpg/02/52/38/80/1000_F_252388016_KjPnB9vglSCuUJAumCDNbmMzGdzPAucK.jpg'}} style={styles.image} />
+      <Image source={require('../../assets/AuthenBiteLogo.png')} style={styles.image} />
     </View>
   );
 }

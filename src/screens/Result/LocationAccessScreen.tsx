@@ -6,8 +6,15 @@ import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import Geolocation from 'react-native-geolocation-service';
 
 type RootStackParamList = {
-  NextScreen: undefined;
+  SplashScreen: undefined;
+  Onboarding: undefined;
+  Login: undefined;
+  SignUp: undefined;
   LocationAccessScreen: undefined;
+  ResultScreen: undefined;
+  NextScreen: undefined;
+  FoodDetails: undefined;
+  RestaurantList: undefined;
 };
 
 type LocationAccessScreenNavigationProp = StackNavigationProp<RootStackParamList, 'LocationAccessScreen'>;
