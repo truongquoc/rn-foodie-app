@@ -34,7 +34,7 @@ const LocationAccessScreen: React.FC<Props> = ({ navigation }) => {
         Geolocation.getCurrentPosition(
           (position) => {
             console.log(position);
-            navigation.navigate('NextScreen'); // Navigate to the next screen
+            navigation.navigate('NextScreen', { position: { latitude: position.coords.latitude, longitude: position.coords.longitude }}); // Navigate to the next screen
           },
           (error) => {
             console.error(error);

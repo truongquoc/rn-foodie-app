@@ -15,10 +15,10 @@ type Props = {
 };
 
 const personaImages = {
-  Escapists: require('../../assets//escapist.png'),
-  Learners: require('../../assets//escapist.png'),
-  Planners: require('../../assets//escapist.png'),
-  Dreamers: require('../../assets//escapist.png'),
+  Escapists: require('../../assets/escapist.jpeg'),
+  Learners: require('../../assets/learner.jpeg'),
+  Planners: require('../../assets/planner.jpeg'),
+  Dreamers: require('../../assets/dreamer.jpeg'),
 };
 
 const ResultScreen: React.FC<Props> = ({ navigation, route }) => {
@@ -40,10 +40,10 @@ const ResultScreen: React.FC<Props> = ({ navigation, route }) => {
       <Text style={styles.subtitle}>You're most likely a {persona}</Text>
       <Image source={require('../../assets/emoij.png')} style={styles.emoji} />
       <TouchableOpacity style={styles.button} onPress={handleSurpriseMe}>
-        <Text style={styles.buttonText}>Surprise me with your magic</Text>
+        <Text style={styles.buttonText}>Nah! I will find it myself </Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.outlineButton} onPress={handleFindItMyself}>
-        <Text style={styles.outlineButtonText}>Nah! I will find it myself</Text>
+        <Text style={styles.outlineButtonText}>Surprise me with your magic</Text>
       </TouchableOpacity>
     </View>
   );

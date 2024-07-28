@@ -18,6 +18,8 @@ import SignUpScreen from '@/screens/Auth/SignUpScreen';
 import RestaurantListScreen from '@/screens/Restaurant/RestaurantListScreen';
 import FoodDetailsScreen from '@/screens/Restaurant/FoodDetailsScreen';
 import CustomDrawerContent from '@/screens/Auth/CustomDrawerContent';
+import NextScreen from '@/screens/Restaurant/NextScreen';
+import ScheduleScreen from '@/screens/Restaurant/ScheduleScreen';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -27,11 +29,13 @@ function MainDrawer() {
 	  <Drawer.Navigator initialRouteName="Onboarding"
 	  drawerContent={(props) => <CustomDrawerContent {...props} />}
 	  >
-		<Stack.Screen name="Onboarding" component={OnboardingScreen} />
+		<Stack.Screen name="Onboarding" component={OnboardingScreen} options={{ title: 'Persona' }} />
 		<Stack.Screen name="LocationAccessScreen" component={LocationAccessScreen} />
 		<Stack.Screen name="ResultScreen" component={ResultScreen} />
 		<Stack.Screen name="RestaurantList" component={RestaurantListScreen} />
 		<Stack.Screen name="FoodDetails" component={FoodDetailsScreen} />
+		<Stack.Screen name="NextScreen" component={NextScreen} />
+        <Stack.Screen name="Schedule" component={ScheduleScreen} />
 	  </Drawer.Navigator>
 	);
 }
@@ -56,7 +60,7 @@ function ApplicationNavigator() {
 			<Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
 			<Stack.Screen name="Login" component={LoginScreen} />
 			<Stack.Screen name="SignUp" component={SignUpScreen} />
-			<Stack.Screen name="MainDrawer" component={MainDrawer} />
+			<Stack.Screen name="MainDrawer" component={MainDrawer}  options={{ headerShown: false }} />
 		  </Stack.Navigator>
 		</NavigationContainer>
 	  );

@@ -1,204 +1,146 @@
 // src/screens/FoodDetailsScreen.tsx
-import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@/types/navigation';
 
+type FoodDetailsScreenRouteProp = RouteProp<RootStackParamList, 'FoodDetails'>;
 type FoodDetailsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'FoodDetails'>;
 
 type Props = {
+  route: FoodDetailsScreenRouteProp;
   navigation: FoodDetailsScreenNavigationProp;
 };
 
-const FoodDetailsScreen: React.FC<Props> = ({ navigation }) => {
-  const [quantity, setQuantity] = useState(1);
+const FoodDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
+  const { restaurant, index } = route.params;
 
-  const handleQuantityChange = (action: 'increment' | 'decrement') => {
-    setQuantity((prevQuantity) => {
-      if (action === 'increment') return prevQuantity + 1;
-      if (action === 'decrement' && prevQuantity > 1) return prevQuantity - 1;
-      return prevQuantity;
-    });
+  const handleBackToList = () => {
+    navigation.navigate('RestaurantList', { index });
+  };
+
+  const renderOpeningHours = (openingHours: any) => {
+    return Object.keys(openingHours).map((day) => (
+      <Text key={day} style={styles.openingHoursText}>
+        {day}: {openingHours[day]}
+      </Text>
+    ));
   };
 
   return (
-    <Text>Food Details Screen</Text>
-    // <ScrollView style={styles.container}>
-    //   <View style={styles.header}>
-    //     <TouchableOpacity onPress={() => navigation.goBack()}>
-    //       <Text style={styles.backButton}>{'<'}</Text>
-    //     </TouchableOpacity>
-    //     <TouchableOpacity>
-    //       <Text style={styles.favoriteButton}>❤</Text>
-    //     </TouchableOpacity>
-    //   </View>
-    //   <Image source={{uri: 'https://lh5.googleusercontent.com/p/AF1QipMg1505Yqok-XCz8mySPSoe7pqOlnhsqSGxLlz2=w1920-h1080-k-no'}} style={styles.foodImage} /> {/* Adjust the path as necessary */}
-    //   <View style={styles.detailsContainer}>
-    //     <Text style={styles.title}>Burger Bistro</Text>
-    //     <Text style={styles.subtitle}>Rose Garden</Text>
-    //     <View style={styles.ratingContainer}>
-    //       <Text style={styles.rating}>⭐ 4.7</Text>
-    //       <Text style={styles.delivery}>Free Delivery</Text>
-    //       <Text style={styles.time}>20 min</Text>
-    //     </View>
-    //     <Text style={styles.description}>
-    //       Maecenas sed diam eget risus varius blandit sit amet non magna. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.
-    //     </Text>
-    //     <Text style={styles.sectionTitle}>SIZE:</Text>
-    //     <View style={styles.sizeContainer}>
-    //       <TouchableOpacity style={[styles.sizeButton, styles.selectedSizeButton]}>
-    //         <Text style={styles.sizeButtonText}>10</Text>
-    //       </TouchableOpacity>
-    //       <TouchableOpacity style={styles.sizeButton}>
-    //         <Text style={styles.sizeButtonText}>14"</Text>
-    //       </TouchableOpacity>
-    //       <TouchableOpacity style={styles.sizeButton}>
-    //         <Text style={styles.sizeButtonText}>16"</Text>
-    //       </TouchableOpacity>
-    //     </View>
-    //     <Text style={styles.sectionTitle}>INGREDIENTS:</Text>
-    //     <View style={styles.ingredientsContainer}>
-    //     </View>
-    //     <View style={styles.priceContainer}>
-    //       <Text style={styles.price}>$32</Text>
-    //       <View style={styles.quantityContainer}>
-    //         <TouchableOpacity onPress={() => handleQuantityChange('decrement')} style={styles.quantityButton}>
-    //           <Text style={styles.quantityButtonText}>-</Text>
-    //         </TouchableOpacity>
-    //         <Text style={styles.quantity}>{quantity}</Text>
-    //         <TouchableOpacity onPress={() => handleQuantityChange('increment')} style={styles.quantityButton}>
-    //           <Text style={styles.quantityButtonText}>+</Text>
-    //         </TouchableOpacity>
-    //       </View>
-    //     </View>
-    //     <TouchableOpacity style={styles.addToCartButton}>
-    //       <Text style={styles.addToCartButtonText}>ADD TO CART</Text>
-    //     </TouchableOpacity>
-    //   </View>
-    // </ScrollView>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Image source={{ uri: restaurant.main_image_url || 'https://via.placeholder.com/150' }} style={styles.image} />
+      <Text style={styles.title}>{restaurant.name}</Text>
+      <Text style={styles.rating}>Rating: ⭐ {restaurant.rating || 'N/A'}</Text>
+      <Text style={styles.address}>{restaurant.address}</Text>
+      {restaurant.phone_number && (
+        <TouchableOpacity onPress={() => Linking.openURL(`tel:${restaurant.phone_number}`)}>
+          <Text style={styles.phone}>Phone: {restaurant.phone_number}</Text>
+        </TouchableOpacity>
+      )}
+      {restaurant.website && (
+        <TouchableOpacity onPress={() => Linking.openURL(restaurant.website)}>
+          <Text style={styles.website}>Website: {restaurant.website}</Text>
+        </TouchableOpacity>
+      )}
+      <Text style={styles.status}>Status: {restaurant.is_open ? 'Open' : 'Closed'}</Text>
+      <Text style={styles.veganOptions}>Vegan Options: {restaurant.vegan_options ? 'Available' : 'Not Available'}</Text>
+      {restaurant.opening_hours_formatted && (
+        <View style={styles.openingHoursContainer}>
+          <Text style={styles.openingHoursTitle}>Opening Hours:</Text>
+          {renderOpeningHours(restaurant.opening_hours_formatted)}
+        </View>
+      )}
+      <TouchableOpacity style={styles.backButton} onPress={handleBackToList}>
+        <Text style={styles.backButtonText}>Back to List</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     padding: 16,
     backgroundColor: '#fff',
+    alignItems: 'center',
   },
-  backButton: {
-    fontSize: 24,
-    color: '#ff6347',
-  },
-  favoriteButton: {
-    fontSize: 24,
-    color: '#ff6347',
-  },
-  foodImage: {
+  image: {
     width: '100%',
-    height: 250,
-    resizeMode: 'cover',
-  },
-  detailsContainer: {
-    padding: 16,
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    marginTop: -30,
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 16,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#888',
-    marginBottom: 10,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   rating: {
-    fontSize: 16,
-    marginRight: 10,
-  },
-  delivery: {
-    fontSize: 16,
-    marginRight: 10,
-  },
-  time: {
-    fontSize: 16,
-  },
-  description: {
-    fontSize: 14,
+    fontSize: 18,
     color: '#888',
-    marginBottom: 20,
+    marginBottom: 8,
   },
-  sectionTitle: {
+  address: {
     fontSize: 16,
+    color: '#888',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  phone: {
+    fontSize: 16,
+    color: '#ff6347',
+    marginBottom: 8,
+  },
+  website: {
+    fontSize: 16,
+    color: '#ff6347',
+    marginBottom: 8,
+  },
+  status: {
+    fontSize: 16,
+    color: '#888',
+    marginBottom: 8,
+  },
+  veganOptions: {
+    fontSize: 16,
+    color: '#888',
+    marginBottom: 8,
+  },
+  openingHoursContainer: {
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  openingHoursTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 8,
   },
-  sizeContainer: {
-    flexDirection: 'row',
-    marginBottom: 20,
+  openingHoursText: {
+    fontSize: 16,
+    color: '#888',
   },
-  sizeButton: {
-    padding: 10,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 10,
-    marginRight: 10,
-  },
-  selectedSizeButton: {
+  backButton: {
     backgroundColor: '#ff6347',
-  },
-  sizeButtonText: {
-    color: '#fff',
-  },
-  ingredientsContainer: {
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
-  priceContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  price: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  quantityContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  quantityButton: {
-    padding: 10,
-    backgroundColor: '#f5f5f5',
+    padding: 15,
+    paddingLeft: 100,
+    paddingRight: 100,
     borderRadius: 10,
-    marginRight: 10,
+    marginTop: 20,
   },
-  quantityButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  quantity: {
+  backButtonText: {
+    color: '#fff',
     fontSize: 16,
   },
-  addToCartButton: {
+  scheduleButton: {
     backgroundColor: '#ff6347',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
+    marginTop: 20,
   },
-  addToCartButtonText: {
+  scheduleButtonText: {
     color: '#fff',
     fontSize: 16,
   },

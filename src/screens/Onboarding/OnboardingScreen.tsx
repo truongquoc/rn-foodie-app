@@ -4,6 +4,8 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert, Dimensions } from 'rea
 import Swiper from 'react-native-swiper';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@/types/navigation';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { log } from 'console';
 
 const { width } = Dimensions.get('window');
 
@@ -80,11 +82,11 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
     if (questionIndex < questions.length - 1) {
       swiperRef.current?.scrollBy(1);
     } else {
-      calculatePersona();
+      asynccalculatePersona();
     }
   };
 
-  const calculatePersona = () => {
+  const asynccalculatePersona = async () => {
     const personaScores = { Escapists: 0, Learners: 0, Planners: 0, Dreamers: 0 };
 
     answers.forEach(answer => {
@@ -118,7 +120,44 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
     if (personaScores.Planners === maxScore) persona = 'Planners';
     if (personaScores.Dreamers === maxScore) persona = 'Dreamers';
 
-    navigation.navigate('ResultScreen', { persona });
+    const personaMapping = {
+      Escapists: 'ES',
+      Learners: 'LR',
+      Planners: 'PL',
+      Dreamers: 'DR',
+    };
+    const personaCode = personaMapping[persona];
+
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) {
+      Alert.alert('Error', 'No user token found');
+      return;
+    }
+
+    try {
+      console.log('persona', personaCode);
+      
+      const response = await fetch('https://botunique.com/api/users/set_persona/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ persona: personaCode }),
+      });
+
+      console.log('response persona', response);
+      
+      navigation.navigate('ResultScreen', { persona });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        Alert.alert('Error', errorData.message || 'Failed to set persona');
+      }
+    } catch (error) {
+      console.error('Error setting persona:', error);
+      Alert.alert('Error', 'Failed to set persona');
+    }
   };
 
   return (
